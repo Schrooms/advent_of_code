@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+from tools import InputProcessor
 
 @dataclass(frozen=True)
 class Command:
@@ -26,15 +27,13 @@ class Submarine:
     def execute_command(self, command: Command) -> None:
        getattr(self, command.direction)(command.value)
 
-
-def get_commands(file_name: str) -> List[Command]:
-    with open(file_name, 'r') as file:
-        lines = file.readlines()
-        return [Command(direction=x.split()[0], value=int(x.split()[1])) for x in lines]
+class CommandLineProcessor(InputProcessor[Command]):
+    def process_line(self, line:str):
+        return Command(direction=line.split()[0], value=int(line.split()[1]))
 
 
 if __name__ == '__main__':
-    commands = get_commands('02.txt')
+    commands = CommandLineProcessor('02.txt').process_input()
     sub = Submarine()
     for command in commands:
         sub.execute_command(command)

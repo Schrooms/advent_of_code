@@ -1,8 +1,21 @@
-from typing import List
+import abc
+from typing import List, Generic, TypeVar
+from abc import ABC, abstractmethod
 
-def get_numbers(file_name: str) -> List[int]:
-    with open(file_name,'r') as file:
-        return [int(x) for x in file.readlines()]
+T = TypeVar('T')
+
+
+class InputProcessor(ABC,Generic[T]):
+    def __init__(self, input_file: str) -> None:
+        self.input_file = input_file
+
+    @abstractmethod
+    def process_line(self, line:str) -> T:
+        pass
+
+    def process_input(self) -> List[T]:
+        with open(self.input_file,'r') as file:
+            return [self.process_line(x) for x in file.readlines()]
 
 
 def get_increases(number: List[int]) -> int:
