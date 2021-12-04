@@ -1,5 +1,5 @@
-from __future__ import annotations, barry_as_FLUFL
-from typing import Generator, List, TextIO
+from __future__ import annotations
+from typing import Dict, Generator, List, TextIO
 from tools import InputProcessor
 from dataclasses import dataclass
 
@@ -30,28 +30,27 @@ class Board:
                 if val.value == value:
                     val.checked = True
         self.has_won(value)
-    
+
     def has_won(self, value:int) -> None:
-        horizontal = self._has_won_horizontal()
-        vertical = self._has_won_vertical()
-        if horizontal or vertical:
+        if  self._has_won_horizontal() or self._has_won_vertical():
             raise WonException(self, value)
-    
+
     def _has_won_horizontal(self) -> bool:
         for row in self.rows:
             if len([x for x in row if x.checked]) == 5:
                 return True
         return False
-    
+
     def _has_won_vertical(self):
         for i in range(5):
             if len([row[i] for row in self.rows if row[i].checked]) == 5:
                 return True
         return False
-    
+
     def get_unchecked_numbers(self) -> int:
         un_checked = [x.value for row in self.rows for x in row if not x.checked]
         return(sum(un_checked))
+
     def __hash__(self) -> int:
         return hash(str(self.rows))
 
@@ -69,7 +68,7 @@ class BoardProcessor():
             # skip first 2 line
             file.readline()
             file.readline()
-           
+
             return [i for i in self.get_boards(file)]
 
     def get_boards(self, file: TextIO) -> Generator[Board, None, None]:
@@ -86,12 +85,12 @@ if __name__ == '__main__':
     numbers = HeaderProcessor('04.txt').process_input()[0]
     boards = BoardProcessor('04.txt').process_input()
 
-    won = {}
-    for b in boards:
-        try:    
+    won: Dict[Board, int] = {}
+    for board in boards:
+        try:
             for index, num in enumerate(numbers):
-                b.ceck_value(num)
+                board.ceck_value(num)
         except WonException as ex:
-          won[b] = index
-    last_won:Board = max(won, key=won.get)
+          won[board] = index
+    last_won:Board = max(won, key=won.get) # type: ignore
     print(last_won.get_unchecked_numbers() * last_won.last_num)
