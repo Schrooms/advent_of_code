@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__ import annotations, barry_as_FLUFL
 from typing import Generator, List, TextIO
 from tools import InputProcessor
 from dataclasses import dataclass
@@ -19,10 +19,12 @@ class CheckedValue:
 @dataclass
 class Board:
     rows: List[List[CheckedValue]]
+    last_num:int = 0
     def __repr__(self) -> str:
         return f"<BOARD {self.rows}>"
 
     def ceck_value(self, value: int) -> None:
+        self.last_num = value
         for row in self.rows:
             for val in row:
                 if val.value == value:
@@ -50,6 +52,8 @@ class Board:
     def get_unchecked_numbers(self) -> int:
         un_checked = [x.value for row in self.rows for x in row if not x.checked]
         return(sum(un_checked))
+    def __hash__(self) -> int:
+        return hash(str(self.rows))
 
 class HeaderProcessor(InputProcessor[List[int]]):
     def process_line(self, line:str) -> List[int]:
@@ -61,7 +65,6 @@ class BoardProcessor():
     file_name: str
 
     def process_input(self) -> List[Board]:
-        boards: List[Board] = []
         with open(self.file_name, 'r') as file:
             # skip first 2 line
             file.readline()
@@ -83,9 +86,12 @@ if __name__ == '__main__':
     numbers = HeaderProcessor('04.txt').process_input()[0]
     boards = BoardProcessor('04.txt').process_input()
 
-    try:
-        for num in numbers:
-            for b in boards:
+    won = {}
+    for b in boards:
+        try:    
+            for index, num in enumerate(numbers):
                 b.ceck_value(num)
-    except WonException as ex:
-        print(ex.board.get_unchecked_numbers() * ex.called_number)
+        except WonException as ex:
+          won[b] = index
+    last_won:Board = max(won, key=won.get)
+    print(last_won.get_unchecked_numbers() * last_won.last_num)
