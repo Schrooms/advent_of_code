@@ -8,14 +8,20 @@ T = TypeVar('T')
 class InputProcessor(ABC,Generic[T]):
     def __init__(self, input_file: str) -> None:
         self.input_file = input_file
+        self.stop = False
 
     @abstractmethod
     def process_line(self, line:str) -> T:
         pass
 
     def process_input(self) -> List[T]:
-        with open(self.input_file,'r') as file:
-            return [self.process_line(x) for x in file.readlines()]
+        result: List[T] = []
+        with open(self.input_file,'r') as file:  
+            for x in file:
+                if self.stop:
+                    return result
+                result.append(self.process_line(x))
+        return result
 
 
 def get_increases(number: List[int]) -> int:
