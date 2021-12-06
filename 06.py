@@ -25,16 +25,19 @@ def create_baby_fish(mamma: Fish) -> Optional[Fish]:
 
 fishes = StateInputProcessor('06.txt').getstate()
 
-for day in range(256):
-    babies = []
-    for fish in fishes:
-        baby = create_baby_fish(mamma=fish)
-        if baby:
-            babies.append(baby)
-            fish.age =6
-            continue
-        fish.age -=1
-    fishes += babies
-    print(day)
 
-print(len(fishes))
+def solve(initial: List[Fish], days:int)-> List[Fish]:
+    fishes = initial
+    for day in range(days):
+        babies = []
+        for fish in fishes:
+            baby = create_baby_fish(mamma=fish)
+            if baby:
+                babies.append(baby)
+                fish.age =6
+                continue
+            fish.age -=1
+        fishes += babies
+    return fishes
+
+print(len(solve(fishes,80))) #359999
