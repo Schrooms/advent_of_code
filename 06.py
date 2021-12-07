@@ -1,13 +1,9 @@
 from typing import List
-from tools import InputProcessor
+from tools import CommaInputProcessor, InputProcessor
 from collections import deque
 
-class StateInputProcessor(InputProcessor[List[int]]):
-    def process_line(self, line: str) -> List[int]:
-        return [int(n) for n in line.split(',')]
 
-
-inital_state = StateInputProcessor('06.txt').process_input()[0]
+inital_state = CommaInputProcessor('06.txt').process_input()[0]
 
 # ammount of fish per day old:
 #               0  1  2  3  4  5  6  7  8

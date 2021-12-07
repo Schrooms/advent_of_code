@@ -16,13 +16,16 @@ class InputProcessor(ABC,Generic[T]):
 
     def process_input(self) -> List[T]:
         result: List[T] = []
-        with open(self.input_file,'r') as file:  
+        with open(self.input_file,'r') as file:
             for x in file:
                 if self.stop:
                     return result
                 result.append(self.process_line(x))
         return result
 
+class CommaInputProcessor(InputProcessor[List[int]]):
+    def process_line(self, line: str) -> List[int]:
+        return [int(n) for n in line.split(',')]
 
 def get_increases(number: List[int]) -> int:
     increaded: int = 0
