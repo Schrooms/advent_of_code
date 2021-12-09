@@ -10,6 +10,7 @@ def calulate_fuel(crab_posissions: List[int], pos: int) -> int:
     feul = 0
     for c in crab_posisions:
         steps = abs(c - pos)
+        print(1 ** steps)
         for i in range(1, steps+1):
             feul += i
     return feul
